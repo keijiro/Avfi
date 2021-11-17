@@ -1,0 +1,16 @@
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+
+/Library
+/Logs
+/Recordings
+/Temp
+/UserSettings
+
+/Plugin/*.so
+/Plugin/*.bundle
+/Plugin/*.xcodeproj
+
+*.mp4
