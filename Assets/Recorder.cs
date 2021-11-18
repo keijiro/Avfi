@@ -1,5 +1,5 @@
 using UnityEngine;
-using Unity.Collections;
+using UnityEngine.Rendering;
 using Unity.Collections.LowLevel.Unsafe;
 using IntPtr = System.IntPtr;
 using DateTime = System.DateTime;
@@ -7,8 +7,6 @@ using DateTime = System.DateTime;
 sealed class Recorder : MonoBehaviour
 {
     [SerializeField] RenderTexture _source = null;
-
-    NativeArray<Color32> _buffer;
 
     public bool IsPlaying { get; private set; }
 
@@ -26,27 +24,25 @@ sealed class Recorder : MonoBehaviour
         IsPlaying = false;
     }
 
-    void Start()
-      => _buffer = new NativeArray<Color32>
-           (_source.width * _source.height,
-            Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-
     void OnDestroy()
     {
         if (IsPlaying) EndRecording();
-        _buffer.Dispose();
     }
 
-    unsafe void Update()
+    void Start()
+      => Application.targetFrameRate = 60;
+
+    void Update()
     {
         if (!IsPlaying) return;
+        AsyncGPUReadback.Request(_source, 0, OnSourceReadback);
+    }
 
-        var (w, h) = (_source.width, _source.height);
-
-        var p = (Color32)Color.HSVToRGB(Time.time % 1, 1, 1);
-        for (var i = 0; i < w * h; i++) _buffer[i]  = p;
-
-        var ptr = NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(_buffer);
-        VideoWriter.Update((IntPtr)ptr, (uint)(w * h * 4));
+    unsafe void OnSourceReadback(AsyncGPUReadbackRequest request)
+    {
+        if (!IsPlaying) return;
+        var data = request.GetData<byte>(0);
+        var ptr = (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(data);
+        VideoWriter.Update(ptr, (uint)data.Length);
     }
 }
