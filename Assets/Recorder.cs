@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Unity.Collections.LowLevel.Unsafe;
@@ -12,10 +13,16 @@ sealed class Recorder : MonoBehaviour
 
     string Filename => $"Record_{DateTime.Now:MMdd_HHmm_ss}.mp4";
 
+    Queue<double> _timeQueue = new Queue<double>();
+    double _startTime;
+
     public void StartRecording()
     {
         VideoWriter.Start(Filename, _source.width, _source.height);
         IsPlaying = true;
+
+        _timeQueue.Clear();
+        _startTime = 0;
     }
 
     public void EndRecording()
@@ -35,6 +42,17 @@ sealed class Recorder : MonoBehaviour
     void Update()
     {
         if (!IsPlaying) return;
+
+        if (_startTime == 0)
+        {
+            _timeQueue.Enqueue(0);
+            _startTime = Time.timeAsDouble;
+        }
+        else
+        {
+            _timeQueue.Enqueue(Time.timeAsDouble - _startTime);
+        }
+
         AsyncGPUReadback.Request(_source, 0, OnSourceReadback);
     }
 
@@ -43,6 +61,6 @@ sealed class Recorder : MonoBehaviour
         if (!IsPlaying) return;
         var data = request.GetData<byte>(0);
         var ptr = (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(data);
-        VideoWriter.Update(ptr, (uint)data.Length);
+        VideoWriter.Update(ptr, (uint)data.Length, _timeQueue.Dequeue());
     }
 }
