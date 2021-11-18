@@ -17,11 +17,4 @@ static class VideoWriter
 
     [DllImport(DllName, EntryPoint = "VideoWriter_End")]
     public static extern void End();
-
-#if !UNITY_EDITOR && UNITY_IOS
-
-    [DllImport(DllName, EntryPoint = "VideoWriter_StoreToAlbum")]
-    public static extern void StoreToAlbum(string filePath);
-
-#endif
 }

@@ -116,8 +116,18 @@ extern void VideoWriter_End(void)
         return;
     }
 
+#if TARGET_OS_IOS
+    AVAssetWriter* writer = _writer;
+#endif
+
     [_writerInput markAsFinished];
-    [_writer finishWritingWithCompletionHandler:^{ NSLog(@"Done"); }];
+    [_writer finishWritingWithCompletionHandler:^{
+#if TARGET_OS_IOS
+        UISaveVideoAtPathToSavedPhotosAlbum
+          (writer.outputURL.path, nil, nil, nil);
+#endif
+        NSLog(@"Done");
+    }];
 
     [_writer release];
     [_writerInput release];
@@ -127,13 +137,3 @@ extern void VideoWriter_End(void)
     _writerInput = NULL;
     _bufferAdaptor = NULL;
 }
-
-#if TARGET_OS_IOS
-
-extern void VideoWriter_StoreToAlbum(const char* path)
-{
-    UISaveVideoAtPathToSavedPhotosAlbum
-      ([NSString stringWithUTF8String:path], nil, nil, nil);
-}
-
-#endif

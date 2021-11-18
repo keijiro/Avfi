@@ -11,8 +11,6 @@ sealed class Recorder : MonoBehaviour
 
     public bool IsPlaying { get; private set; }
 
-    string _lastPath;
-
     string Filename => $"Record_{DateTime.Now:MMdd_HHmm_ss}.mp4";
 
     Queue<double> _timeQueue = new Queue<double>();
@@ -20,16 +18,11 @@ sealed class Recorder : MonoBehaviour
 
     public void StartRecording()
     {
-#if !UNITY_EDITOR && UNITY_IOS
-        if (_lastPath != null) VideoWriter.StoreToAlbum(_lastPath);
-#endif
-
         var path = Filename;
 
         if (Application.platform == RuntimePlatform.IPhonePlayer)
             path = Application.temporaryCachePath + "/" + path;
 
-        _lastPath = path;
         VideoWriter.Start(path, _source.width, _source.height);
         IsPlaying = true;
 
