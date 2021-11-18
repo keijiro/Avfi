@@ -1,5 +1,9 @@
 #import <AVFoundation/AVFoundation.h>
 
+#if TARGET_OS_IOS
+#import <UIKit/UIKit.h>
+#endif
+
 // Internal objects
 static AVAssetWriter* _writer;
 static AVAssetWriterInput* _writerInput;
@@ -95,11 +99,13 @@ extern void VideoWriter_Update(const void* source, uint32_t size, double time)
     size_t buffer_size = CVPixelBufferGetDataSize(buffer);
     memcpy(pointer, source, MIN(size, buffer_size));
 
+    CVPixelBufferUnlockBaseAddress(buffer, 0);
+
     // Buffer submission
     [_bufferAdaptor appendPixelBuffer:buffer
                  withPresentationTime:CMTimeMakeWithSeconds(time, 240)];
 
-    CVPixelBufferUnlockBaseAddress(buffer, 0);
+    CVPixelBufferRelease(buffer);
 }
 
 extern void VideoWriter_End(void)
@@ -121,3 +127,13 @@ extern void VideoWriter_End(void)
     _writerInput = NULL;
     _bufferAdaptor = NULL;
 }
+
+#if TARGET_OS_IOS
+
+extern void VideoWriter_StoreToAlbum(const char* path)
+{
+    UISaveVideoAtPathToSavedPhotosAlbum
+      ([NSString stringWithUTF8String:path], nil, nil, nil);
+}
+
+#endif
