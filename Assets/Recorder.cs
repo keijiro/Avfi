@@ -18,7 +18,12 @@ sealed class Recorder : MonoBehaviour
 
     public void StartRecording()
     {
-        VideoWriter.Start(Filename, _source.width, _source.height);
+        var path = Filename;
+
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+            path = Application.temporaryCachePath + "/" + path;
+
+        VideoWriter.Start(path, _source.width, _source.height);
         IsPlaying = true;
 
         _timeQueue.Clear();

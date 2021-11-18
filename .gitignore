@@ -9,7 +9,9 @@ Desktop.ini
 /Temp
 /UserSettings
 
+/Plugin/*.o
 /Plugin/*.so
+/Plugin/*.a
 /Plugin/*.bundle
 /Plugin/*.xcodeproj
 
