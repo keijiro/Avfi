@@ -15,5 +15,6 @@ sealed class Controller : MonoBehaviour
             rec.StartRecording();
 
         _buttonLabel.text = rec.IsPlaying ? "Stop" : "Record";
+        _buttonLabel.color = rec.IsPlaying ? Color.red : Color.black;
     }
 }
