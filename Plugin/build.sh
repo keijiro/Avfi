@@ -23,5 +23,6 @@ lipo -create -output VideoWriter.bundle x86_64.so arm64.so
 
 ar -crv libVideoWriter.a Plugin.o
 
-cp VideoWriter.bundle ../Assets
-cp libVideoWriter.a ../Assets
+DST="../Assets/VideoWriter/Runtime/Plugins"
+cp VideoWriter.bundle $DST
+cp libVideoWriter.a $DST
