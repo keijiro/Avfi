@@ -1,0 +1,12 @@
+{
+    "author": "Keijiro Takahashi",
+    "dependencies": { },
+    "description": "Simple video recorder with AV Foundation",
+    "displayName": "Avfi",
+    "keywords": [ "unity" ],
+    "license": "Unlicense",
+    "name": "jp.keijiro.avfi",
+    "unity": "2021.1",
+    "unityRelease": "0f1",
+    "version": "1.0.0"
+}

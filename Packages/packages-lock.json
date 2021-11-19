@@ -9,6 +9,12 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "jp.keijiro.avfi": {
+      "version": "file:jp.keijiro.avfi",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.modules.imgui": {
       "version": "1.0.0",
       "depth": 1,
