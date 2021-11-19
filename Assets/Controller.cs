@@ -5,6 +5,9 @@ sealed class Controller : MonoBehaviour
 {
     [SerializeField] Text _buttonLabel = null;
 
+    void Start()
+      => Application.targetFrameRate = 60;
+
     public void OnPressRecordButton()
     {
         var rec = GetComponent<Recorder>();
