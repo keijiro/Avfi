@@ -89,6 +89,7 @@ extern void Avfi_AppendFrame(const void* source, uint32_t size, double time)
     if (ret != kCVReturnSuccess)
     {
         NSLog(@"Can't allocate a pixel buffer (%d)", ret);
+        NSLog(@"%ld: %@", _writer.status, _writer.error);
         return;
     }
 

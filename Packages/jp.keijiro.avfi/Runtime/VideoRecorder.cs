@@ -1,9 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Unity.Collections.LowLevel.Unsafe;
 using IntPtr = System.IntPtr;
-using DateTime = System.DateTime;
 
 namespace Avfi {
 
@@ -25,12 +23,10 @@ public sealed class VideoRecorder : MonoBehaviour
 
     public void StartRecording()
     {
-        var path = GetTimestampedFilePath();
+        var path = PathUtil.GetTemporaryFilePath();
         Plugin.StartRecording(path, _source.width, _source.height);
 
         _timeQueue.Clear();
-        _startTime = 0;
-
         IsPlaying = true;
     }
 
@@ -43,25 +39,10 @@ public sealed class VideoRecorder : MonoBehaviour
 
     #endregion
 
-    #region Timestamped filename generation
-
-    string GetDirectoryPath()
-      => Application.platform == RuntimePlatform.IPhonePlayer
-           ? Application.temporaryCachePath : ".";
-
-    string GetTimestampedFilename()
-      => $"Record_{DateTime.Now:MMdd_HHmm_ss}.mp4";
-
-    string GetTimestampedFilePath()
-      => GetDirectoryPath() + "/" + GetTimestampedFilename();
-
-    #endregion
-
     #region Private objects
 
     RenderTexture _buffer;
-    Queue<double> _timeQueue = new Queue<double>();
-    double _startTime;
+    TimeQueue _timeQueue = new TimeQueue();
 
     void ChangeSource(RenderTexture rt)
     {
@@ -105,19 +86,8 @@ public sealed class VideoRecorder : MonoBehaviour
     void Update()
     {
         if (!IsPlaying) return;
-
+        if (!_timeQueue.TryEnqueueNow()) return;
         Graphics.Blit(_source, _buffer, new Vector2(1, -1), new Vector2(0, 1));
-
-        if (_startTime == 0)
-        {
-            _timeQueue.Enqueue(0);
-            _startTime = Time.timeAsDouble;
-        }
-        else
-        {
-            _timeQueue.Enqueue(Time.timeAsDouble - _startTime);
-        }
-
         AsyncGPUReadback.Request(_buffer, 0, OnSourceReadback);
     }
 

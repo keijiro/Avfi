@@ -23,6 +23,6 @@ lipo -create -output Avfi.bundle x86_64.so arm64.so
 
 ar -crv libAvfi.a Avfi.o
 
-DST="../Assets/Avfi/Runtime/Plugins"
+DST="../Packages/jp.keijiro.avfi/Runtime/Plugins"
 cp Avfi.bundle $DST
 cp libAvfi.a $DST
