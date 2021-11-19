@@ -18,7 +18,7 @@ public sealed class VideoRecorder : MonoBehaviour
 
     #region Public properties and methods
 
-    public bool IsPlaying
+    public bool IsRecording
       { get; private set; }
 
     public void StartRecording()
@@ -27,14 +27,14 @@ public sealed class VideoRecorder : MonoBehaviour
         Plugin.StartRecording(path, _source.width, _source.height);
 
         _timeQueue.Clear();
-        IsPlaying = true;
+        IsRecording = true;
     }
 
     public void EndRecording()
     {
         AsyncGPUReadback.WaitAllRequests();
         Plugin.EndRecording();
-        IsPlaying = false;
+        IsRecording = false;
     }
 
     #endregion
@@ -46,7 +46,7 @@ public sealed class VideoRecorder : MonoBehaviour
 
     void ChangeSource(RenderTexture rt)
     {
-        if (IsPlaying)
+        if (IsRecording)
         {
             Debug.LogError("Can't change the source while recording.");
             return;
@@ -64,7 +64,7 @@ public sealed class VideoRecorder : MonoBehaviour
 
     unsafe void OnSourceReadback(AsyncGPUReadbackRequest request)
     {
-        if (!IsPlaying) return;
+        if (!IsRecording) return;
         var data = request.GetData<byte>(0);
         var ptr = (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(data);
         Plugin.AppendFrame(ptr, (uint)data.Length, _timeQueue.Dequeue());
@@ -79,13 +79,13 @@ public sealed class VideoRecorder : MonoBehaviour
 
     void OnDestroy()
     {
-        if (IsPlaying) EndRecording();
+        if (IsRecording) EndRecording();
         Destroy(_buffer);
     }
 
     void Update()
     {
-        if (!IsPlaying) return;
+        if (!IsRecording) return;
         if (!_timeQueue.TryEnqueueNow()) return;
         Graphics.Blit(_source, _buffer, new Vector2(1, -1), new Vector2(0, 1));
         AsyncGPUReadback.Request(_buffer, 0, OnSourceReadback);

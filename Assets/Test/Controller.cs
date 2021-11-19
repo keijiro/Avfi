@@ -12,12 +12,12 @@ sealed class Controller : MonoBehaviour
     {
         var rec = GetComponent<Avfi.VideoRecorder>();
 
-        if (rec.IsPlaying)
+        if (rec.IsRecording)
             rec.EndRecording();
         else
             rec.StartRecording();
 
-        _buttonLabel.text = rec.IsPlaying ? "Stop" : "Record";
-        _buttonLabel.color = rec.IsPlaying ? Color.red : Color.black;
+        _buttonLabel.text = rec.IsRecording ? "Stop" : "Record";
+        _buttonLabel.color = rec.IsRecording ? Color.red : Color.black;
     }
 }
