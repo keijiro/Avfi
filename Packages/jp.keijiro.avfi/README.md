@@ -1,6 +1,9 @@
 Avfi
 ====
 
+![gif](https://user-images.githubusercontent.com/343936/142568294-4cef6937-654c-4cfd-9d9e-032a4c84674e.gif)
+![gif](https://user-images.githubusercontent.com/343936/142568320-d6285d24-adeb-4997-8ae6-5038288f4ce8.gif)
+
 **Avfi** is a Unity plugin allowing an application to record video clips with
 a simple operation.
 
@@ -31,7 +34,7 @@ To the `scopedRegistries` section:
 To the `dependencies` section:
 
 ```
-"jp.keijiro.avfi": "1.0.0"
+"jp.keijiro.avfi": "1.0.1"
 ```
 
 After the changes, the manifest file should look like:
@@ -46,6 +49,6 @@ After the changes, the manifest file should look like:
     }
   ],
   "dependencies": {
-    "jp.keijiro.avfi": "1.0.0",
+    "jp.keijiro.avfi": "1.0.1",
     ...
 ```

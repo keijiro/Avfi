@@ -34,7 +34,7 @@ To the `scopedRegistries` section:
 To the `dependencies` section:
 
 ```
-"jp.keijiro.avfi": "1.0.0"
+"jp.keijiro.avfi": "1.0.1"
 ```
 
 After the changes, the manifest file should look like:
@@ -49,6 +49,6 @@ After the changes, the manifest file should look like:
     }
   ],
   "dependencies": {
-    "jp.keijiro.avfi": "1.0.0",
+    "jp.keijiro.avfi": "1.0.1",
     ...
 ```
