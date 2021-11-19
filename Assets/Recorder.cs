@@ -13,12 +13,6 @@ sealed class Recorder : MonoBehaviour
 
     #endregion
 
-    #region Private asset reference
-
-    [SerializeField, HideInInspector] Shader _shader = null;
-
-    #endregion
-
     #region Public members for UI
 
     public bool IsPlaying { get; private set; }
@@ -60,8 +54,6 @@ sealed class Recorder : MonoBehaviour
     #region Private objects
 
     RenderTexture _buffer;
-    Material _material;
-
     Queue<double> _timeQueue = new Queue<double>();
     double _startTime;
 
@@ -82,23 +74,19 @@ sealed class Recorder : MonoBehaviour
     #region MonoBehaviour implementation
 
     void Start()
-    {
-        _buffer = new RenderTexture(_source.width, _source.height, 0);
-        _material = new Material(_shader);
-    }
+      => _buffer = new RenderTexture(_source.width, _source.height, 0);
 
     void OnDestroy()
     {
         if (IsPlaying) EndRecording();
         Destroy(_buffer);
-        Destroy(_material);
     }
 
     void Update()
     {
         if (!IsPlaying) return;
 
-        Graphics.Blit(_source, _buffer, _material);
+        Graphics.Blit(_source, _buffer, new Vector2(1, -1), new Vector2(0, 1));
 
         if (_startTime == 0)
         {
