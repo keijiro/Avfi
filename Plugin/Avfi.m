@@ -9,7 +9,7 @@ static AVAssetWriter* _writer;
 static AVAssetWriterInput* _writerInput;
 static AVAssetWriterInputPixelBufferAdaptor* _bufferAdaptor;
 
-extern void VideoWriter_Start(const char* filePath, int width, int height)
+extern void Avfi_StartRecording(const char* filePath, int width, int height)
 {
     if (_writer)
     {
@@ -67,7 +67,7 @@ extern void VideoWriter_Start(const char* filePath, int width, int height)
     [_writer startSessionAtSourceTime:kCMTimeZero];
 }
 
-extern void VideoWriter_Update(const void* source, uint32_t size, double time)
+extern void Avfi_AppendFrame(const void* source, uint32_t size, double time)
 {
     if (!_writer)
     {
@@ -108,7 +108,7 @@ extern void VideoWriter_Update(const void* source, uint32_t size, double time)
     CVPixelBufferRelease(buffer);
 }
 
-extern void VideoWriter_End(void)
+extern void Avfi_EndRecording(void)
 {
     if (!_writer)
     {

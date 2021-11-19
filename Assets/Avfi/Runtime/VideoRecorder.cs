@@ -5,22 +5,28 @@ using Unity.Collections.LowLevel.Unsafe;
 using IntPtr = System.IntPtr;
 using DateTime = System.DateTime;
 
-sealed class Recorder : MonoBehaviour
+namespace Avfi {
+
+public sealed class VideoRecorder : MonoBehaviour
 {
     #region Editable attributes
 
     [SerializeField] RenderTexture _source = null;
 
+    public RenderTexture source
+      { get => _source; set => ChangeSource(value); }
+
     #endregion
 
-    #region Public members for UI
+    #region Public properties and methods
 
-    public bool IsPlaying { get; private set; }
+    public bool IsPlaying
+      { get; private set; }
 
     public void StartRecording()
     {
-        VideoWriter.Start
-          (GetTimestampedFilePath(), _source.width, _source.height);
+        var path = GetTimestampedFilePath();
+        Plugin.StartRecording(path, _source.width, _source.height);
 
         _timeQueue.Clear();
         _startTime = 0;
@@ -31,7 +37,7 @@ sealed class Recorder : MonoBehaviour
     public void EndRecording()
     {
         AsyncGPUReadback.WaitAllRequests();
-        VideoWriter.End();
+        Plugin.EndRecording();
         IsPlaying = false;
     }
 
@@ -39,7 +45,7 @@ sealed class Recorder : MonoBehaviour
 
     #region Timestamped filename generation
 
-    string DirectoryPath
+    string GetDirectoryPath()
       => Application.platform == RuntimePlatform.IPhonePlayer
            ? Application.temporaryCachePath : ".";
 
@@ -47,7 +53,7 @@ sealed class Recorder : MonoBehaviour
       => $"Record_{DateTime.Now:MMdd_HHmm_ss}.mp4";
 
     string GetTimestampedFilePath()
-      => DirectoryPath + "/" + GetTimestampedFilename();
+      => GetDirectoryPath() + "/" + GetTimestampedFilename();
 
     #endregion
 
@@ -56,6 +62,20 @@ sealed class Recorder : MonoBehaviour
     RenderTexture _buffer;
     Queue<double> _timeQueue = new Queue<double>();
     double _startTime;
+
+    void ChangeSource(RenderTexture rt)
+    {
+        if (IsPlaying)
+        {
+            Debug.LogError("Can't change the source while recording.");
+            return;
+        }
+
+        if (_buffer != null) Destroy(_buffer);
+
+        _source = rt;
+        _buffer = new RenderTexture(rt.width, rt.height, 0);
+    }
 
     #endregion
 
@@ -66,7 +86,7 @@ sealed class Recorder : MonoBehaviour
         if (!IsPlaying) return;
         var data = request.GetData<byte>(0);
         var ptr = (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(data);
-        VideoWriter.Update(ptr, (uint)data.Length, _timeQueue.Dequeue());
+        Plugin.AppendFrame(ptr, (uint)data.Length, _timeQueue.Dequeue());
     }
 
     #endregion
@@ -74,7 +94,7 @@ sealed class Recorder : MonoBehaviour
     #region MonoBehaviour implementation
 
     void Start()
-      => _buffer = new RenderTexture(_source.width, _source.height, 0);
+      => ChangeSource(_source);
 
     void OnDestroy()
     {
@@ -103,3 +123,5 @@ sealed class Recorder : MonoBehaviour
 
     #endregion
 }
+
+} // namespace Avfi

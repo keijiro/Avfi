@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 624149804}
   - component: {fileID: 624149802}
   m_Layer: 0
-  m_Name: Recorder
+  m_Name: Video Recorder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,7 +154,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _source: {fileID: 8400000, guid: bba7e441058c342e4968e2007df3bd4b, type: 2}
-  _shader: {fileID: 4800000, guid: a8e9274b7336f447cb22af8b8a884238, type: 3}
 --- !u!4 &624149803
 Transform:
   m_ObjectHideFlags: 0

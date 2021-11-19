@@ -10,7 +10,7 @@ sealed class Controller : MonoBehaviour
 
     public void OnPressRecordButton()
     {
-        var rec = GetComponent<Recorder>();
+        var rec = GetComponent<Avfi.VideoRecorder>();
 
         if (rec.IsPlaying)
             rec.EndRecording();

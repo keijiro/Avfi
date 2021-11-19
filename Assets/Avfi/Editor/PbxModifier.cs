@@ -1,5 +1,7 @@
 #if UNITY_IOS
 
+namespace Avfi {
+
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
@@ -27,5 +29,7 @@ public class PbxModifier
         plist.WriteToFile(plistPath);
     }
 }
+
+} // namespace Avfi
 
 #endif
